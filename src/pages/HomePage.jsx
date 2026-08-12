@@ -2,8 +2,12 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { fetchAllTweets } from "../features/tweets/tweetSlice";
-import TweetList from "../components/TweetList";
-import Loading from "../components/Loading";
+
+import LeftSidebar from "../components/layout/LeftSidebar";
+import RightSidebar from "../components/layout/RightSidebar";
+import TweetComposer from "../components/tweet/TweetComposer";
+import TweetList from "../components/tweet/TweetList";
+import Loading from "../components/common/Loading";
 
 function HomePage() {
   const dispatch = useDispatch();
@@ -19,27 +23,35 @@ function HomePage() {
   }, [dispatch]);
 
   return (
-    <main className="min-h-screen bg-gray-100">
-      <div className="mx-auto min-h-screen max-w-2xl border-x border-gray-200 bg-white">
-        <header className="border-b border-gray-200 px-5 py-4">
-          <h1 className="text-xl font-bold text-gray-900">
-            Home
-          </h1>
-        </header>
+    <div className="min-h-screen bg-white text-gray-900">
+      <div className="mx-auto flex max-w-7xl">
+        <LeftSidebar />
 
-        {loading && <Loading />}
+        <main className="min-h-screen w-full max-w-2xl border-r border-gray-200">
+          <header className="sticky top-0 z-10 border-b border-gray-200 bg-white/90 px-5 py-4 backdrop-blur">
+            <h1 className="text-xl font-bold">
+              Home
+            </h1>
+          </header>
 
-        {error && (
-          <p className="p-5 text-center text-red-600">
-            {error}
-          </p>
-        )}
+          <TweetComposer />
 
-        {!loading && !error && (
-          <TweetList tweets={tweets} />
-        )}
+          {loading && <Loading />}
+
+          {error && (
+            <p className="p-5 text-center text-red-600">
+              {error}
+            </p>
+          )}
+
+          {!loading && !error && (
+            <TweetList tweets={tweets} />
+          )}
+        </main>
+
+        <RightSidebar />
       </div>
-    </main>
+    </div>
   );
 }
 

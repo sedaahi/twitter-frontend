@@ -3,8 +3,8 @@ import TweetCard from "./TweetCard";
 function TweetList({ tweets }) {
   if (tweets.length === 0) {
     return (
-      <p className="py-10 text-center text-gray-500">
-        Henüz tweet bulunmuyor.
+      <p className="py-12 text-center text-gray-500">
+        Henüz tweet yok.
       </p>
     );
   }
