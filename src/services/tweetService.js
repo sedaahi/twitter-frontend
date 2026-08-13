@@ -120,3 +120,18 @@ export const undoRetweet = async (retweetId) => {
     throw new Error("Retweet geri alınamadı.");
   }
 };
+export const getTweetById = async (tweetId) => {
+  const response = await fetch(
+    `${API_URL}/tweet/findById?id=${tweetId}`,
+    {
+      method: "GET",
+      headers: getAuthHeaders(),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error("Tweet could not be fetched.");
+  }
+
+  return response.json();
+};

@@ -1,27 +1,25 @@
+import { Route, Routes } from "react-router-dom";
+
+import MainLayout from "./components/layout/MainLayout";
 import HomePage from "./pages/HomePage";
+import TweetDetailPage from "./pages/TweetDetailPage";
 
 function App() {
-  return <HomePage />;
+  return (
+    <Routes>
+      <Route element={<MainLayout />}>
+        <Route
+          path="/"
+          element={<HomePage />}
+        />
+
+        <Route
+          path="/tweet/:tweetId"
+          element={<TweetDetailPage />}
+        />
+      </Route>
+    </Routes>
+  );
 }
 
 export default App;
-
-/*
-HomePage
-   ↓ dispatch
-Redux thunk
-   ↓
-tweetService
-   ↓
-Spring Boot :3000
-   ↓
-TweetResponse[]
-   ↓
-Redux Store
-   ↓
-HomePage
-   ↓
-TweetList
-   ↓
-TweetCard
-*/
