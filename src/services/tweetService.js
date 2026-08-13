@@ -92,3 +92,31 @@ export const dislikeTweet = async (tweetId) => {
     throw new Error("Beğeni kaldırılamadı.");
   }
 };
+
+export const retweetTweet = async (tweetId) => {
+  const response = await fetch(`${API_URL}/retweet`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      tweetId,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Tweet retweet edilemedi.");
+  }
+};
+
+export const undoRetweet = async (retweetId) => {
+  const response = await fetch(
+    `${API_URL}/retweet/${retweetId}`,
+    {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Retweet geri alınamadı.");
+  }
+};

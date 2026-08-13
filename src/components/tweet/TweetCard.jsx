@@ -1,7 +1,10 @@
 import { useDispatch } from "react-redux";
+
 import {
-  likeTweetById,
   dislikeTweetById,
+  likeTweetById,
+  retweetTweetById,
+  undoRetweetById,
 } from "../../features/tweets/tweetSlice";
 
 function TweetCard({ tweet }) {
@@ -14,6 +17,16 @@ function TweetCard({ tweet }) {
       dispatch(dislikeTweetById(tweet.id));
     } else {
       dispatch(likeTweetById(tweet.id));
+    }
+  };
+
+  const handleRetweetToggle = () => {
+    if (tweet.retweetedByCurrentUser) { //true=> Ben bunu daha önce retweet etmişim
+      dispatch(
+        undoRetweetById(tweet.currentUserRetweetId) //=>→ DELETE
+      );
+    } else { //=> Retweet etmemişim
+      dispatch(retweetTweetById(tweet.id)); //=>POST
     }
   };
 
@@ -45,7 +58,13 @@ function TweetCard({ tweet }) {
               <span>0</span>
             </button>
 
-            <button className="flex items-center gap-2 transition hover:text-green-500">
+            <button
+              onClick={handleRetweetToggle}
+              className={`flex items-center gap-2 transition ${tweet.retweetedByCurrentUser
+                  ? "text-green-500"
+                  : "text-gray-500 hover:text-green-500"
+                }`}
+            >
               <span>↻</span>
               <span>{tweet.retweetCount}</span>
             </button>
@@ -54,8 +73,8 @@ function TweetCard({ tweet }) {
               <button
                 onClick={handleLikeToggle}
                 className={`flex items-center gap-2 transition ${tweet.likedByCurrentUser
-                    ? "text-pink-500"
-                    : "text-gray-500 hover:text-pink-500"
+                  ? "text-pink-500"
+                  : "text-gray-500 hover:text-pink-500"
                   }`}
               >
                 <span>

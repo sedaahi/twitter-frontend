@@ -5,6 +5,8 @@ import {
   getAllTweets,
   getTweetsByUserId,
   likeTweet,
+  retweetTweet,
+  undoRetweet,
 } from "../../services/tweetService";
 
 export const fetchAllTweets = createAsyncThunk(
@@ -15,7 +17,7 @@ export const fetchAllTweets = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
-  }
+  },
 );
 
 export const fetchTweetsByUserId = createAsyncThunk(
@@ -26,7 +28,7 @@ export const fetchTweetsByUserId = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
-  }
+  },
 );
 
 export const addTweet = createAsyncThunk(
@@ -37,7 +39,7 @@ export const addTweet = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
-  }
+  },
 );
 
 export const likeTweetById = createAsyncThunk(
@@ -49,7 +51,7 @@ export const likeTweetById = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
-  }
+  },
 );
 
 export const dislikeTweetById = createAsyncThunk(
@@ -61,7 +63,40 @@ export const dislikeTweetById = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
-  }
+  },
+);
+
+export const retweetTweetById = createAsyncThunk(
+  "tweets/retweet",
+  async (tweetId, thunkAPI) => {
+    try {
+      await retweetTweet(tweetId);
+
+      // Retweet oluşturulduktan sonra güncel tweetleri
+      // backend'den tekrar alıyoruz.
+      const tweets = await getAllTweets();
+
+      return tweets;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  },
+);
+
+export const undoRetweetById = createAsyncThunk(
+  "tweets/undoRetweet",
+  async (retweetId, thunkAPI) => {
+    try {
+      await undoRetweet(retweetId);
+
+      // Retweet silindikten sonra güncel veriyi tekrar alıyoruz.
+      const tweets = await getAllTweets();
+
+      return tweets;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  },
 );
 
 const initialState = {
@@ -130,9 +165,7 @@ const tweetSlice = createSlice({
 
       //LIKE
       .addCase(likeTweetById.fulfilled, (state, action) => {
-        const tweet = state.items.find(
-          (tweet) => tweet.id === action.payload
-        );
+        const tweet = state.items.find((tweet) => tweet.id === action.payload);
 
         if (tweet) {
           tweet.likeCount += 1;
@@ -141,9 +174,7 @@ const tweetSlice = createSlice({
       })
 
       .addCase(dislikeTweetById.fulfilled, (state, action) => {
-        const tweet = state.items.find(
-          (tweet) => tweet.id === action.payload
-        );
+        const tweet = state.items.find((tweet) => tweet.id === action.payload);
 
         if (tweet) {
           if (tweet.likeCount > 0) {
@@ -152,6 +183,15 @@ const tweetSlice = createSlice({
 
           tweet.likedByCurrentUser = false;
         }
+      })
+
+      //RETWEET
+      .addCase(retweetTweetById.fulfilled, (state, action) => {
+        state.items = action.payload;
+      })
+
+      .addCase(undoRetweetById.fulfilled, (state, action) => {
+        state.items = action.payload;
       });
   },
 });
