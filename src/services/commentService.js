@@ -8,11 +8,14 @@ const getAuthHeaders = () => ({
 });
 
 export const getCommentsByTweetId = async (tweetId) => {
-  const response = await fetch(`${API_URL}/tweet/${tweetId}`, {
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
-  });
+  const response = await fetch(
+    `${API_URL}/tweet/${tweetId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+    }
+  );
 
   if (!response.ok) {
     throw new Error("Comments could not be fetched.");
@@ -21,7 +24,30 @@ export const getCommentsByTweetId = async (tweetId) => {
   return response.json();
 };
 
-export const createComment = async (tweetId, content) => {
+export const getCommentsByUserId = async (userId) => {
+  const response = await fetch(
+    `${API_URL}/user/${userId}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Kullanıcının yorumları alınamadı."
+    );
+  }
+
+  return response.json();
+};
+
+export const createComment = async (
+  tweetId,
+  content
+) => {
   const response = await fetch(API_URL, {
     method: "POST",
     headers: getAuthHeaders(),
@@ -32,7 +58,9 @@ export const createComment = async (tweetId, content) => {
   });
 
   if (!response.ok) {
-    throw new Error("Comment could not be created.");
+    throw new Error(
+      "Comment could not be created."
+    );
   }
 
   return response.json();
@@ -43,31 +71,41 @@ export const updateComment = async (
   tweetId,
   content
 ) => {
-  const response = await fetch(`${API_URL}/${commentId}`, {
-    method: "PUT",
-    headers: getAuthHeaders(),
-    body: JSON.stringify({
-      tweetId,
-      content,
-    }),
-  });
+  const response = await fetch(
+    `${API_URL}/${commentId}`,
+    {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        tweetId,
+        content,
+      }),
+    }
+  );
 
   if (!response.ok) {
-    throw new Error("Comment could not be updated.");
+    throw new Error(
+      "Comment could not be updated."
+    );
   }
 
   return response.json();
 };
 
 export const deleteComment = async (commentId) => {
-  const response = await fetch(`${API_URL}/${commentId}`, {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
-  });
+  const response = await fetch(
+    `${API_URL}/${commentId}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+    }
+  );
 
   if (!response.ok) {
-    throw new Error("Comment could not be deleted.");
+    throw new Error(
+      "Comment could not be deleted."
+    );
   }
 };

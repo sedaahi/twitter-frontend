@@ -5,6 +5,7 @@ import {
   deleteTweet,
   dislikeTweet,
   getAllTweets,
+  getLikedTweetsByUserId,
   getTweetById,
   getTweetsByUserId,
   likeTweet,
@@ -158,17 +159,33 @@ export const undoRetweetById = createAsyncThunk(
   }
 );
 
+// PROFILE LIKES
+export const fetchLikedTweetsByUserId = createAsyncThunk(
+  "tweets/fetchLikedByUserId",
+  async (userId, thunkAPI) => {
+    try {
+      return await getLikedTweetsByUserId(userId);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
 
 const initialState = {
   items: [],
 
+  likedTweets: [],
+
   selectedTweet: null,
 
   loading: false,
+  likedTweetsLoading: false,
   detailLoading: false,
   posting: false,
 
   error: null,
+  likedTweetsError: null,
 };
 
 
@@ -230,6 +247,21 @@ const tweetSlice = createSlice({
       .addCase(fetchTweetsByUserId.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      // PROFILE LIKES
+      .addCase(fetchLikedTweetsByUserId.pending, (state) => {
+        state.likedTweetsLoading = true;
+        state.likedTweetsError = null;
+      })
+
+      .addCase(fetchLikedTweetsByUserId.fulfilled, (state, action) => {
+        state.likedTweetsLoading = false;
+        state.likedTweets = action.payload;
+      })
+
+      .addCase(fetchLikedTweetsByUserId.rejected, (state, action) => {
+        state.likedTweetsLoading = false;
+        state.likedTweetsError = action.payload;
       })
 
 
@@ -317,6 +349,10 @@ const tweetSlice = createSlice({
 
           tweet.likedByCurrentUser = false;
         }
+        
+        state.likedTweets = state.likedTweets.filter(
+          (tweet) => tweet.id !== tweetId
+        );
 
         if (state.selectedTweet?.id === tweetId) {
           if (state.selectedTweet.likeCount > 0) {

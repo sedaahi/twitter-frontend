@@ -174,3 +174,21 @@ export const undoRetweet = async (retweetId) => {
     throw new Error("Retweet geri alınamadı.");
   }
 };
+
+export const getLikedTweetsByUserId = async (userId) => {
+  const response = await fetch(
+    `${API_URL}/like/user/${userId}`,
+    {
+      method: "GET",
+      headers: getAuthHeaders(),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Kullanıcının beğenilen tweetleri alınamadı."
+    );
+  }
+
+  return response.json();
+};
