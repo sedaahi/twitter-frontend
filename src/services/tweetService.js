@@ -11,15 +11,15 @@ const getAuthHeaders = () => {
   };
 };
 
-    /*
-    token varsa
-        ↓
-        Authorization: Bearer <token>
+/*
+token varsa
+↓
+Authorization: Bearer <token>
 
-    token yoksa
-        ↓
-        Authorization header ekleme
-      */
+token yoksa
+↓
+Authorization header eklenmez
+*/
 
 export const getAllTweets = async () => {
   const response = await fetch(`${API_URL}/tweet`, {
@@ -29,6 +29,22 @@ export const getAllTweets = async () => {
 
   if (!response.ok) {
     throw new Error("Tweetler alınamadı.");
+  }
+
+  return response.json();
+};
+
+export const getTweetById = async (tweetId) => {
+  const response = await fetch(
+    `${API_URL}/tweet/findById?id=${tweetId}`,
+    {
+      method: "GET",
+      headers: getAuthHeaders(),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Tweet alınamadı.");
   }
 
   return response.json();
@@ -65,6 +81,43 @@ export const createTweet = async (content) => {
 
   return response.json();
 };
+
+// Kendi tweet'ini güncelle
+export const updateTweet = async (tweetId, content) => {
+  const response = await fetch(
+    `${API_URL}/tweet/${tweetId}`,
+    {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        content,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Tweet güncellenemedi.");
+  }
+
+  return response.json();
+};
+
+// Kendi tweet'ini sil
+export const deleteTweet = async (tweetId) => {
+  const response = await fetch(
+    `${API_URL}/tweet/${tweetId}`,
+    {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    }
+  );
+
+  // Backend 204 No Content dönüyor.
+  if (!response.ok) {
+    throw new Error("Tweet silinemedi.");
+  }
+};
+
 export const likeTweet = async (tweetId) => {
   const response = await fetch(`${API_URL}/like`, {
     method: "POST",
@@ -87,7 +140,8 @@ export const dislikeTweet = async (tweetId) => {
       tweetId,
     }),
   });
-//response body yok-204 no content döner
+
+  // response body yok → 204 No Content
   if (!response.ok) {
     throw new Error("Beğeni kaldırılamadı.");
   }
@@ -119,19 +173,4 @@ export const undoRetweet = async (retweetId) => {
   if (!response.ok) {
     throw new Error("Retweet geri alınamadı.");
   }
-};
-export const getTweetById = async (tweetId) => {
-  const response = await fetch(
-    `${API_URL}/tweet/findById?id=${tweetId}`,
-    {
-      method: "GET",
-      headers: getAuthHeaders(),
-    },
-  );
-
-  if (!response.ok) {
-    throw new Error("Tweet could not be fetched.");
-  }
-
-  return response.json();
 };

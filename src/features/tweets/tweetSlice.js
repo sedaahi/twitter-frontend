@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import {
   createTweet,
+  deleteTweet,
   dislikeTweet,
   getAllTweets,
   getTweetById,
@@ -9,6 +10,7 @@ import {
   likeTweet,
   retweetTweet,
   undoRetweet,
+  updateTweet,
 } from "../../services/tweetService";
 
 import {
@@ -26,7 +28,7 @@ export const fetchAllTweets = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
-  },
+  }
 );
 
 
@@ -39,7 +41,7 @@ export const fetchTweetById = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
-  },
+  }
 );
 
 
@@ -52,7 +54,7 @@ export const fetchTweetsByUserId = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
-  },
+  }
 );
 
 
@@ -65,7 +67,35 @@ export const addTweet = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
-  },
+  }
+);
+
+
+// EDIT TWEET
+export const editTweet = createAsyncThunk(
+  "tweets/editTweet",
+  async ({ tweetId, content }, thunkAPI) => {
+    try {
+      return await updateTweet(tweetId, content);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+
+// DELETE TWEET
+export const removeTweet = createAsyncThunk(
+  "tweets/removeTweet",
+  async (tweetId, thunkAPI) => {
+    try {
+      await deleteTweet(tweetId);
+
+      return tweetId;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
 );
 
 
@@ -80,7 +110,7 @@ export const likeTweetById = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
-  },
+  }
 );
 
 
@@ -95,7 +125,7 @@ export const dislikeTweetById = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
-  },
+  }
 );
 
 
@@ -106,13 +136,11 @@ export const retweetTweetById = createAsyncThunk(
     try {
       await retweetTweet(tweetId);
 
-      // currentUserRetweetId backend'den geldiği için
-      // güncel tweet listesini tekrar alıyoruz.
       return await getAllTweets();
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
-  },
+  }
 );
 
 
@@ -127,14 +155,13 @@ export const undoRetweetById = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
-  },
+  }
 );
 
 
 const initialState = {
   items: [],
 
-  // Tweet Detail sayfasında gösterilecek tek tweet.
   selectedTweet: null,
 
   loading: false,
@@ -155,10 +182,7 @@ const tweetSlice = createSlice({
   extraReducers: (builder) => {
     builder
 
-      // =========================
       // HOME FEED
-      // =========================
-
       .addCase(fetchAllTweets.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -175,10 +199,7 @@ const tweetSlice = createSlice({
       })
 
 
-      // =========================
       // TWEET DETAIL
-      // =========================
-
       .addCase(fetchTweetById.pending, (state) => {
         state.detailLoading = true;
         state.error = null;
@@ -195,10 +216,7 @@ const tweetSlice = createSlice({
       })
 
 
-      // =========================
       // PROFILE
-      // =========================
-
       .addCase(fetchTweetsByUserId.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -215,10 +233,7 @@ const tweetSlice = createSlice({
       })
 
 
-      // =========================
       // CREATE TWEET
-      // =========================
-
       .addCase(addTweet.pending, (state) => {
         state.posting = true;
         state.error = null;
@@ -226,8 +241,6 @@ const tweetSlice = createSlice({
 
       .addCase(addTweet.fulfilled, (state, action) => {
         state.posting = false;
-
-        // Yeni tweet Home Feed'in en üstüne gelir.
         state.items.unshift(action.payload);
       })
 
@@ -237,15 +250,44 @@ const tweetSlice = createSlice({
       })
 
 
-      // =========================
-      // LIKE
-      // =========================
+      // EDIT TWEET
+      .addCase(editTweet.fulfilled, (state, action) => {
+        const updatedTweet = action.payload;
 
+        const index = state.items.findIndex(
+          (tweet) => tweet.id === updatedTweet.id
+        );
+
+        if (index !== -1) {
+          state.items[index] = updatedTweet;
+        }
+
+        if (state.selectedTweet?.id === updatedTweet.id) {
+          state.selectedTweet = updatedTweet;
+        }
+      })
+
+
+      // DELETE TWEET
+      .addCase(removeTweet.fulfilled, (state, action) => {
+        const tweetId = action.payload;
+
+        state.items = state.items.filter(
+          (tweet) => tweet.id !== tweetId
+        );
+
+        if (state.selectedTweet?.id === tweetId) {
+          state.selectedTweet = null;
+        }
+      })
+
+
+      // LIKE
       .addCase(likeTweetById.fulfilled, (state, action) => {
         const tweetId = action.payload;
 
         const tweet = state.items.find(
-          (tweet) => tweet.id === tweetId,
+          (tweet) => tweet.id === tweetId
         );
 
         if (tweet) {
@@ -253,7 +295,6 @@ const tweetSlice = createSlice({
           tweet.likedByCurrentUser = true;
         }
 
-        // Detail sayfasındaki tweet'i de güncelle.
         if (state.selectedTweet?.id === tweetId) {
           state.selectedTweet.likeCount += 1;
           state.selectedTweet.likedByCurrentUser = true;
@@ -261,15 +302,12 @@ const tweetSlice = createSlice({
       })
 
 
-      // =========================
       // DISLIKE
-      // =========================
-
       .addCase(dislikeTweetById.fulfilled, (state, action) => {
         const tweetId = action.payload;
 
         const tweet = state.items.find(
-          (tweet) => tweet.id === tweetId,
+          (tweet) => tweet.id === tweetId
         );
 
         if (tweet) {
@@ -290,17 +328,13 @@ const tweetSlice = createSlice({
       })
 
 
-      // =========================
       // RETWEET
-      // =========================
-
       .addCase(retweetTweetById.fulfilled, (state, action) => {
         state.items = action.payload;
 
-        // Detail sayfasındaysak o tweet'in güncel halini bul.
         if (state.selectedTweet) {
           const updatedTweet = action.payload.find(
-            (tweet) => tweet.id === state.selectedTweet.id,
+            (tweet) => tweet.id === state.selectedTweet.id
           );
 
           if (updatedTweet) {
@@ -310,16 +344,13 @@ const tweetSlice = createSlice({
       })
 
 
-      // =========================
       // UNDO RETWEET
-      // =========================
-
       .addCase(undoRetweetById.fulfilled, (state, action) => {
         state.items = action.payload;
 
         if (state.selectedTweet) {
           const updatedTweet = action.payload.find(
-            (tweet) => tweet.id === state.selectedTweet.id,
+            (tweet) => tweet.id === state.selectedTweet.id
           );
 
           if (updatedTweet) {
@@ -329,15 +360,12 @@ const tweetSlice = createSlice({
       })
 
 
-      // =========================
       // COMMENT ADD
-      // =========================
-
       .addCase(addComment.fulfilled, (state, action) => {
         const tweetId = action.payload.tweetId;
 
         const tweet = state.items.find(
-          (tweet) => tweet.id === tweetId,
+          (tweet) => tweet.id === tweetId
         );
 
         if (tweet) {
@@ -350,15 +378,12 @@ const tweetSlice = createSlice({
       })
 
 
-      // =========================
       // COMMENT DELETE
-      // =========================
-
       .addCase(removeComment.fulfilled, (state, action) => {
         const tweetId = action.payload.tweetId;
 
         const tweet = state.items.find(
-          (tweet) => tweet.id === tweetId,
+          (tweet) => tweet.id === tweetId
         );
 
         if (tweet && tweet.commentCount > 0) {
@@ -374,6 +399,5 @@ const tweetSlice = createSlice({
       });
   },
 });
-
 
 export default tweetSlice.reducer;

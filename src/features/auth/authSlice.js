@@ -8,6 +8,29 @@ import {
   registerUser,
 } from "../../services/authService";
 
+// LocalStorage'daki kullanıcıyı güvenli şekilde oku.
+const getStoredUser = () => {
+  const storedUser = localStorage.getItem("user"); // LocalStorage'dan kullanıcıyı al
+
+  /**
+   * {
+  "id": 1,
+  "username": "seda",
+  "email": "seda@example.com"
+}
+   */
+  if (!storedUser) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(storedUser);
+  } catch {
+    localStorage.removeItem("user");
+    return null;
+  }
+};
+
 export const login = createAsyncThunk(
   "auth/login",
   async ({ email, password }, thunkAPI) => {
@@ -38,14 +61,15 @@ export const register = createAsyncThunk(
 );
 
 const initialState = {
-  token: localStorage.getItem("token"),
-  user: null,
+  token: localStorage.getItem("token"), // LocalStorage'dan token'ı al
+  user: getStoredUser(), //Sayfayı yenilediğinde Redux yeniden oluşturulurken çalışacak ve kullanıcı tekrar Redux'a alınacak
   loading: false,
   error: null,
 };
 
 const authSlice = createSlice({
   name: "auth",
+
   initialState,
 
   reducers: {
@@ -55,6 +79,7 @@ const authSlice = createSlice({
       state.error = null;
 
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
     },
   },
 
@@ -76,6 +101,11 @@ const authSlice = createSlice({
         localStorage.setItem(
           "token",
           action.payload.token
+        );
+
+        localStorage.setItem(
+          "user",
+          JSON.stringify(action.payload.user)
         );
       })
 
