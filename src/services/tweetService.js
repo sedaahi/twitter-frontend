@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000";
+import { API_BASE_URL } from "../config/api";
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");
@@ -22,7 +22,7 @@ Authorization header eklenmez
 */
 
 export const getAllTweets = async () => {
-  const response = await fetch(`${API_URL}/tweet`, {
+  const response = await fetch(`${API_BASE_URL}/tweet`, {
     method: "GET",
     headers: getAuthHeaders(),
   });
@@ -36,7 +36,7 @@ export const getAllTweets = async () => {
 
 export const getTweetById = async (tweetId) => {
   const response = await fetch(
-    `${API_URL}/tweet/findById?id=${tweetId}`,
+    `${API_BASE_URL}/tweet/findById?id=${tweetId}`,
     {
       method: "GET",
       headers: getAuthHeaders(),
@@ -52,7 +52,7 @@ export const getTweetById = async (tweetId) => {
 
 export const getTweetsByUserId = async (userId) => {
   const response = await fetch(
-    `${API_URL}/tweet/findByUserId?userId=${userId}`,
+    `${API_BASE_URL}/tweet/findByUserId?userId=${userId}`,
     {
       method: "GET",
       headers: getAuthHeaders(),
@@ -67,7 +67,7 @@ export const getTweetsByUserId = async (userId) => {
 };
 
 export const createTweet = async (content) => {
-  const response = await fetch(`${API_URL}/tweet`, {
+  const response = await fetch(`${API_BASE_URL}/tweet`, {
     method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify({
@@ -85,7 +85,7 @@ export const createTweet = async (content) => {
 // Kendi tweet'ini güncelle
 export const updateTweet = async (tweetId, content) => {
   const response = await fetch(
-    `${API_URL}/tweet/${tweetId}`,
+    `${API_BASE_URL}/tweet/${tweetId}`,
     {
       method: "PUT",
       headers: getAuthHeaders(),
@@ -105,7 +105,7 @@ export const updateTweet = async (tweetId, content) => {
 // Kendi tweet'ini sil
 export const deleteTweet = async (tweetId) => {
   const response = await fetch(
-    `${API_URL}/tweet/${tweetId}`,
+    `${API_BASE_URL}/tweet/${tweetId}`,
     {
       method: "DELETE",
       headers: getAuthHeaders(),
@@ -119,7 +119,7 @@ export const deleteTweet = async (tweetId) => {
 };
 
 export const likeTweet = async (tweetId) => {
-  const response = await fetch(`${API_URL}/like`, {
+  const response = await fetch(`${API_BASE_URL}/like`, {
     method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify({
@@ -133,7 +133,7 @@ export const likeTweet = async (tweetId) => {
 };
 
 export const dislikeTweet = async (tweetId) => {
-  const response = await fetch(`${API_URL}/dislike`, {
+  const response = await fetch(`${API_BASE_URL}/dislike`, {
     method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify({
@@ -148,7 +148,7 @@ export const dislikeTweet = async (tweetId) => {
 };
 
 export const retweetTweet = async (tweetId) => {
-  const response = await fetch(`${API_URL}/retweet`, {
+  const response = await fetch(`${API_BASE_URL}/retweet`, {
     method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify({
@@ -163,7 +163,7 @@ export const retweetTweet = async (tweetId) => {
 
 export const undoRetweet = async (retweetId) => {
   const response = await fetch(
-    `${API_URL}/retweet/${retweetId}`,
+    `${API_BASE_URL}/retweet/${retweetId}`,
     {
       method: "DELETE",
       headers: getAuthHeaders(),
@@ -177,7 +177,7 @@ export const undoRetweet = async (retweetId) => {
 
 export const getLikedTweetsByUserId = async (userId) => {
   const response = await fetch(
-    `${API_URL}/like/user/${userId}`,
+    `${API_BASE_URL}/like/user/${userId}`,
     {
       method: "GET",
       headers: getAuthHeaders(),

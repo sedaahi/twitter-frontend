@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:3000/comment";
+import { API_BASE_URL } from "../config/api";
+
+const COMMENT_API_URL = `${API_BASE_URL}/comment`;
 
 const getToken = () => localStorage.getItem("token");
 
@@ -9,7 +11,7 @@ const getAuthHeaders = () => ({
 
 export const getCommentsByTweetId = async (tweetId) => {
   const response = await fetch(
-    `${API_URL}/tweet/${tweetId}`,
+    `${COMMENT_API_URL}/tweet/${tweetId}`,
     {
       headers: {
         Authorization: `Bearer ${getToken()}`,
@@ -26,7 +28,7 @@ export const getCommentsByTweetId = async (tweetId) => {
 
 export const getCommentsByUserId = async (userId) => {
   const response = await fetch(
-    `${API_URL}/user/${userId}`,
+    `${COMMENT_API_URL}/user/${userId}`,
     {
       method: "GET",
       headers: {
@@ -48,7 +50,7 @@ export const createComment = async (
   tweetId,
   content
 ) => {
-  const response = await fetch(API_URL, {
+  const response = await fetch(COMMENT_API_URL, {
     method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify({
@@ -72,7 +74,7 @@ export const updateComment = async (
   content
 ) => {
   const response = await fetch(
-    `${API_URL}/${commentId}`,
+    `${COMMENT_API_URL}/${commentId}`,
     {
       method: "PUT",
       headers: getAuthHeaders(),
@@ -94,7 +96,7 @@ export const updateComment = async (
 
 export const deleteComment = async (commentId) => {
   const response = await fetch(
-    `${API_URL}/${commentId}`,
+    `${COMMENT_API_URL}/${commentId}`,
     {
       method: "DELETE",
       headers: {

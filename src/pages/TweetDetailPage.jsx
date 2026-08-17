@@ -75,7 +75,10 @@ function TweetDetailPage() {
 
 
       {/* Tıklanan Tweet */}
-      <TweetCard tweet={selectedTweet} />
+      <TweetCard
+        tweet={selectedTweet}
+        clickable={false}
+      />
 
 
       {/* Tweet'e direkt reply yazma */}
