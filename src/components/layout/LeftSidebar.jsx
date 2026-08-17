@@ -20,29 +20,32 @@ function LeftSidebar() {
         </div>
 
         <nav className="space-y-2">
+          {/* HOME */}
           <button
             type="button"
             onClick={() => navigate("/")}
-            className="flex w-full items-center gap-4 rounded-full px-4 py-3 text-lg font-medium hover:bg-gray-100"
+            className="flex w-full items-center gap-5 rounded-full px-3 py-3 text-lg font-medium transition hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer"
           >
-            <span>⌂</span>
+            <i className="fa-solid fa-house w-7 text-center text-2xl"></i>
             <span>Home</span>
           </button>
 
+          {/* EXPLORE */}
           <button
             type="button"
-            className="flex w-full items-center gap-4 rounded-full px-4 py-3 text-lg font-medium hover:bg-gray-100"
+            className="flex w-full items-center gap-5 rounded-full px-3 py-3 text-lg font-medium transition hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer"
           >
-            <span>⌕</span>
+            <i className="fa-solid fa-magnifying-glass w-7 text-center text-2xl"></i>
             <span>Explore</span>
           </button>
 
+          {/* PROFILE */}
           <button
             type="button"
             onClick={() => navigate("/profile")}
-            className="flex w-full items-center gap-4 rounded-full px-4 py-3 text-lg font-medium hover:bg-gray-100"
+            className="flex w-full items-center gap-5 rounded-full px-3 py-3 text-lg font-medium transition hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer"
           >
-            <span>♙</span>
+            <i className="fa-regular fa-user w-7 text-center text-2xl"></i>
             <span>Profile</span>
           </button>
         </nav>
