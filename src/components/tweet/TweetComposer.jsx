@@ -37,6 +37,7 @@ function TweetComposer() {
 
         <div className="flex-1">
           <textarea
+          id="tweet-composer"
             value={content}
             onChange={(event) =>
               setContent(event.target.value)

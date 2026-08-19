@@ -7,6 +7,16 @@ function LeftSidebar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const handlePostClick = () => {
+    navigate("/");
+
+    setTimeout(() => {
+      document
+        .getElementById("tweet-composer")
+        ?.focus();
+    }, 100);
+  };
+
   const handleLogout = () => {
     dispatch(logout());
     navigate("/login");
@@ -24,7 +34,7 @@ function LeftSidebar() {
           <button
             type="button"
             onClick={() => navigate("/")}
-            className="flex w-full items-center gap-5 rounded-full px-3 py-3 text-lg font-medium transition hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer"
+            className="flex w-full items-center gap-5 rounded-full px-3 py-3 text-lg font-medium text-gray-900 transition hover:bg-gray-200 cursor-pointer"
           >
             <i className="fa-solid fa-house w-7 text-center text-2xl"></i>
             <span>Home</span>
@@ -33,7 +43,7 @@ function LeftSidebar() {
           {/* EXPLORE */}
           <button
             type="button"
-            className="flex w-full items-center gap-5 rounded-full px-3 py-3 text-lg font-medium transition hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer"
+            className="flex w-full items-center gap-5 rounded-full px-3 py-3 text-lg font-medium text-gray-900 transition hover:bg-gray-200 cursor-pointer"
           >
             <i className="fa-solid fa-magnifying-glass w-7 text-center text-2xl"></i>
             <span>Explore</span>
@@ -43,7 +53,7 @@ function LeftSidebar() {
           <button
             type="button"
             onClick={() => navigate("/profile")}
-            className="flex w-full items-center gap-5 rounded-full px-3 py-3 text-lg font-medium transition hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer"
+            className="flex w-full items-center gap-5 rounded-full px-3 py-3 text-lg font-medium text-gray-900 transition hover:bg-gray-200 cursor-pointer"
           >
             <i className="fa-regular fa-user w-7 text-center text-2xl"></i>
             <span>Profile</span>
@@ -52,7 +62,8 @@ function LeftSidebar() {
 
         <button
           type="button"
-          className="mt-6 w-full rounded-full bg-black py-3 font-semibold text-white transition hover:bg-gray-800"
+          onClick={handlePostClick}
+          className="mt-6 w-full rounded-full bg-black py-3 font-semibold text-white transition hover:bg-gray-800 cursor-pointer"
         >
           Post
         </button>
@@ -60,7 +71,7 @@ function LeftSidebar() {
         <button
           type="button"
           onClick={handleLogout}
-          className="mt-4 flex w-full items-center justify-center rounded-full border border-gray-300 py-3 font-semibold transition hover:bg-gray-100"
+          className="mt-4 flex w-full items-center justify-center rounded-full border border-gray-300 py-3 font-semibold text-gray-900 transition hover:bg-gray-100 cursor-pointer"
         >
           Logout
         </button>
